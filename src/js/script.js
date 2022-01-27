@@ -63,7 +63,6 @@
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
       thisProduct.processOrder();
-      console.log(thisProduct);
     }
 
     renderInMenu() {
@@ -77,7 +76,6 @@
     getElements() {
       const thisProduct = this;
       thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
-      console.log('accordionTrigger');
       thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
@@ -90,8 +88,8 @@
       thisProduct.accordionTrigger.addEventListener('click', function (event) {
         event.preventDefault();
         const activeProduct = document.querySelector(select.all.menuProductsActive);
-        console.log('activeProduct',activeProduct);
-        if (activeProduct != null && activeProduct != thisProduct.element) {
+        console.log('activeProduct', activeProduct);
+        if (activeProduct !== null && activeProduct !== thisProduct.element) {
           activeProduct.classList.remove(classNames.menuProduct.wrapperActive);
         }
         thisProduct.element.classList.toggle(classNames.menuProduct.wrapperActive);
@@ -100,7 +98,6 @@
 
     initOrderForm() {
       const thisProduct = this;
-      console.log(this.initOrderForm);
       thisProduct.form.addEventListener('submit', function (event) {
         event.preventDefault();
         thisProduct.processOrder();
@@ -121,26 +118,23 @@
       const formData = utils.serializeFormToObject(thisProduct.form);
       console.log('formData', formData);
       let price = thisProduct.data.price;//set price to default price
-      // for every category (param)...
       for (let paramId in thisProduct.data.params) {
-        // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
         const param = thisProduct.data.params[paramId];
         console.log(paramId, param);
-        // for every option in this category
         for (let optionId in param.options) {
-          // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
           const option = param.options[optionId];
           console.log(option.price, option);
-          if(!option.default && formData[paramId].includes(optionId)){
+          if (!option.default && formData[paramId].includes(optionId)) {
             price += option.price;
-            console.log('tacenapasuje',option.price);
+            console.log('dodajecene', option.price);
           }
-          
+          if (option.default === true && !formData[paramId].includes(optionId)) {
+            price -= option.price;
+            console.log('odejmijodceny', option.price);
+          }
         }
       }
-      console.log('aktualnacena',price);
-
-      // update calculated price in the HTML
+      console.log('aktualnacena', price);
       thisProduct.priceElem.innerHTML = price;
     }
   }
